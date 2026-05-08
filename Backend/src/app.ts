@@ -65,13 +65,11 @@ app.use(notFoundMiddleware);
 app.use(errorMiddleware);
 
 // ── Server ────────────────────────────────────────────────────────────────────
-// Only call app.listen in non-serverless environments.
-// Vercel imports this file as a module — app.listen is not needed there.
-if (process.env.NODE_ENV !== 'production' || process.env.RUN_LOCAL === 'true') {
-  const PORT = process.env.PORT || 5000;
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-  });
-}
+// Always start the HTTP server.
+// On Vercel the export is used; on Render/Railway this listen call is required.
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
 
 export default app;
