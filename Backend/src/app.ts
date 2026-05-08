@@ -12,14 +12,43 @@ dotenv.config();
 
 const app: Application = express();
 
-// Connect to MongoDB
+// Connect to MongoDB (cached for serverless)
 connectDB();
 
-// Middlewares
-app.use(cors());
+// ── CORS ──────────────────────────────────────────────────────────────────────
+// Must be configured BEFORE routes so preflight OPTIONS requests are handled.
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:3000',
+  // Add your deployed frontend URL here once known:
+  'https://seo-analytics-git-main-arvind-kumar2006.vercel.app',
+  'https://seo-analytics-one.vercel.app',
+  process.env.FRONTEND_URL,
+].filter(Boolean) as string[];
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // Allow requests with no origin (Postman, curl, server-to-server)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) return callback(null, true);
+      // In development, allow all
+      if (process.env.NODE_ENV !== 'production') return callback(null, true);
+      callback(new Error(`CORS: origin ${origin} not allowed`));
+    },
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
+  })
+);
+
+// Explicitly handle preflight for all routes
+app.options('*', cors());
+
+// ── Body Parsing ───────────────────────────────────────────────────────────────
 app.use(express.json());
 
-// Routes
+// ── Routes ────────────────────────────────────────────────────────────────────
 app.get('/', (req, res) => {
   res.status(200).json({
     success: true,
@@ -31,14 +60,18 @@ app.use('/api/organizations', organizationRoutes);
 app.use('/api/seo', seoRoutes);
 app.use('/api/execution', executionRoutes);
 
-// Error Handling
+// ── Error Handling ────────────────────────────────────────────────────────────
 app.use(notFoundMiddleware);
 app.use(errorMiddleware);
 
-const PORT = process.env.PORT || 5000;
-
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+// ── Server ────────────────────────────────────────────────────────────────────
+// Only call app.listen in non-serverless environments.
+// Vercel imports this file as a module — app.listen is not needed there.
+if (process.env.NODE_ENV !== 'production' || process.env.RUN_LOCAL === 'true') {
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}
 
 export default app;

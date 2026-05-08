@@ -1,7 +1,7 @@
 import axios from 'axios';
 import type { OrganizationInput, Organization, SEOReport, ExecutionContent, APIResponse } from '../types/seo.types';
 
-const API_URL = 'http://localhost:5555/api';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5555/api';
 
 const apiClient = axios.create({
   baseURL: API_URL,
