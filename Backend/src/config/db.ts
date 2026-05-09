@@ -16,9 +16,7 @@ const connectDB = async (): Promise<void> => {
   }
 
   try {
-    const conn = await mongoose.connect(mongoUri, {
-      serverSelectionTimeoutMS: 10000, // 10s timeout for serverless cold starts
-    });
+    const conn = await mongoose.connect(mongoUri);
     isConnected = true;
     console.log(`MongoDB Connected: ${conn.connection.host}`);
   } catch (error: any) {
