@@ -13,8 +13,6 @@ const steps = [
   { id: 5, name: 'AI Recommendations', detail: 'Building your execution plan' },
 ];
 
-// Estimated seconds per step for the countdown display
-const stepDurations = [1, 2, 3, 5, 8];
 
 const LoadingSteps: React.FC<LoadingStepsProps> = ({ currentStep }) => {
   const [elapsed, setElapsed] = useState(0);
@@ -62,7 +60,6 @@ const LoadingSteps: React.FC<LoadingStepsProps> = ({ currentStep }) => {
           {steps.map((step) => {
             const isCompleted = currentStep > step.id;
             const isCurrent = currentStep === step.id;
-            const isPending = currentStep < step.id;
 
             return (
               <div

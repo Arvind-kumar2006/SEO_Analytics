@@ -26,7 +26,6 @@ const buildFallback = (
 ): ExecutionContent => {
   const name = orgName || 'our team';
   const primaryService = services?.[0] || industry || 'our services';
-  const secondaryService = services?.[1] || primaryService;
   const allServices = services?.join(', ') || primaryService;
   const geo = geography || 'your area';
   const aud = audience || 'our clients';

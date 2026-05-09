@@ -1,6 +1,6 @@
 import React from 'react';
 import SectionCard from '../common/SectionCard';
-import { Lightbulb, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { Lightbulb, ArrowRight } from 'lucide-react';
 import type { SEORecommendation } from '../../types/seo.types';
 
 interface RecommendationsProps {
